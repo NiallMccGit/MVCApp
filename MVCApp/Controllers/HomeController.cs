@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using static DataLibrary.BusinessLoic.EmployeeProcessor;
 
 namespace MVCApp.Controllers
 {
@@ -27,6 +28,28 @@ namespace MVCApp.Controllers
 
             return View();
         }
+
+        public ActionResult ViewEmployees()
+        {
+            ViewBag.Message = "Employee List";
+
+            var data = LoadEmployees();
+            List<EmployeeModel> employees = new List<EmployeeModel>();
+
+            foreach (var employee in data)
+            {
+                employees.Add(new EmployeeModel
+                {
+                    EmployeeId = employee.EmployeeId,
+                    FirstName = employee.FirstName,
+                    LastName = employee.LastName,
+                    EmailAddress = employee.EmailAddress,
+                    ConfirmEmail = employee.EmailAddress
+                });
+            }
+
+            return View(employees);
+        }
         
         public ActionResult SignUp()
         {
@@ -41,9 +64,9 @@ namespace MVCApp.Controllers
         {
             if (ModelState.IsValid)
             {
+                int rowsAffected = CreateEmployee(model.EmployeeId, model.FirstName, model.LastName, model.EmailAddress);
 
-
-                return RedirectToAction("Index");
+                return RedirectToAction("ViewEmployees");
             }
 
             return View();
